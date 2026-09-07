@@ -53,18 +53,29 @@ int main() {
 
     // ---- Two independent traversals of the same structure, in flight together ----
     section("Two independent iterators over the same hierarchy");
-    WorkIterator* fullWalk = incident->createDepthFirstIterator();
     WorkIterator* availableWalk = incident->createAvailableUnitIterator();
-
+    // WorkIterator* fullWalk = incident->createDepthFirstIterator();
+    
+    // // Test delete after iterator snapshot
+    // delete opsBranch;
+    
+    // std::cout << "Full roll call, first 3 entries, unaffected by the above:\n";
+    // for (int i = 0; i < 3 && fullWalk->hasNext(); ++i) {
+    //     std::cout << "  " << fullWalk->next()->getName() << "\n";
+    // }
+    // delete fullWalk;
+    section("Iterator invalidation test");
+    WorkIterator* fullWalk = incident->createDepthFirstIterator();
+    delete opsBranch;
+    std::cout << "Continuing traversal after deletion:\n";
+    while (fullWalk->hasNext()) {
+        std::cout << fullWalk->next()->getName() << "\n";
+    }
+    delete fullWalk;
     std::cout << "Units currently available:\n";
     while (availableWalk->hasNext()) {
         std::cout << "  " << availableWalk->next()->getName() << "\n";
     }
-    std::cout << "Full roll call, first 3 entries, unaffected by the above:\n";
-    for (int i = 0; i < 3 && fullWalk->hasNext(); ++i) {
-        std::cout << "  " << fullWalk->next()->getName() << "\n";
-    }
-    delete fullWalk;
     delete availableWalk;
 
     // ---- Runtime structural + decoration change on a unit already in the hierarchy ----
@@ -80,9 +91,7 @@ int main() {
     // ---- Runtime structural change: move a unit between groups ----
     section("Re-tasking: Rescue 5 moves from Division A into Strike Team 1");
     rescue5->dispatch();
-    rescue5->enRoute();
-    divisionA->remove(rescue5);
-    strikeTeam1->add(rescue5);
+
 
     section("Full duty performance after all changes");
     incident->performDuty();
