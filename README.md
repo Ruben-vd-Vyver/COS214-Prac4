@@ -1,19 +1,23 @@
 # Running
 ## Setting up docker environment
 docker build -t taskforge .
+
 docker run --rm -it taskforge bash
 
 ## Building and running program
 make
+
 ./taskforge
 
 ## Debugging
 gdb ./taskforge
+
 valgrind --leak-check=full --show-leak-kinds=all ./taskforg
 
 # Bug found
 *Bug Found During Testing*
-While testing the iterator, I found a bug where the program would crash if a unit was deleted while the iterator was still being used. The iterator still had a pointer to the deleted unit, so when it tried to access it again, it was accessing invalid memory. I used GDB to step through the code and check the iterator and unit pointers, which helped me find that the iterator was still pointing to the deleted object. Instead of changing the whole iterator to handle deletions, I decided that units should not be deleted while an iterator is currently being used. The main program already follows this rule, so this should not happen during normal use. I also tested what happens when the rule is broken, which confirmed that the crash was caused by the invalid pointer. <\br>
+While testing the iterator, I found a bug where the program would crash if a unit was deleted while the iterator was still being used. The iterator still had a pointer to the deleted unit, so when it tried to access it again, it was accessing invalid memory. I used GDB to step through the code and check the iterator and unit pointers, which helped me find that the iterator was still pointing to the deleted object. Instead of changing the whole iterator to handle deletions, I decided that units should not be deleted while an iterator is currently being used. The main program already follows this rule, so this should not happen during normal use. I also tested what happens when the rule is broken, which confirmed that the crash was caused by the invalid pointer.
+
 I ended up deciding on a policy that units should not be deleted while an iterator is being used to traverse them.
 
 # Valgrind output (no memory leaks found)
