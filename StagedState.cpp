@@ -9,6 +9,7 @@ StagedState* StagedState::getInstance() {
     return &instance;
 }
 
+//This is a bug.
 void StagedState::dispatch(ResponseUnit* unit) {
     std::cout << "  " << unit->getName() << " dispatched.\n";
     unit->setState(DispatchedState::getInstance());
